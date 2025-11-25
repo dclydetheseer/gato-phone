@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -24,5 +22,6 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background-color: #1a1a1a;
-  overflow: hidden; /* Prevent scrolling on the body */
+  overflow: hidden;
+  /* Prevent scrolling on the body */
 }
