@@ -43,8 +43,13 @@ export const OSProvider = ({ children }) => {
 
     // Gato Account State
     const [gatoAccount, setGatoAccount] = useState(() => {
-        const saved = localStorage.getItem('gato_os_account');
-        return saved ? JSON.parse(saved) : null;
+        try {
+            const saved = localStorage.getItem('gato_os_account');
+            return saved ? JSON.parse(saved) : null;
+        } catch (e) {
+            console.error("Failed to parse gato account", e);
+            return null;
+        }
     });
 
     const [notifications, setNotifications] = useState([]);

@@ -6,12 +6,21 @@ export const useFileSystem = () => useContext(FileSystemContext);
 
 export const FileSystemProvider = ({ children }) => {
     const [fs, setFs] = useState(() => {
-        const savedFs = localStorage.getItem('gato_os_fs');
-        return savedFs ? JSON.parse(savedFs) : {
-            '/storage/emulated/0/DCIM/Camera': [],
-            '/storage/emulated/0/Pictures': [],
-            '/storage/emulated/0/Downloads': [],
-        };
+        try {
+            const savedFs = localStorage.getItem('gato_os_fs');
+            return savedFs ? JSON.parse(savedFs) : {
+                '/storage/emulated/0/DCIM/Camera': [],
+                '/storage/emulated/0/Pictures': [],
+                '/storage/emulated/0/Downloads': [],
+            };
+        } catch (e) {
+            console.error("Failed to parse file system", e);
+            return {
+                '/storage/emulated/0/DCIM/Camera': [],
+                '/storage/emulated/0/Pictures': [],
+                '/storage/emulated/0/Downloads': [],
+            };
+        }
     });
 
     useEffect(() => {
