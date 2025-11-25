@@ -18,6 +18,8 @@ import PlayStoreApp from './apps/PlayStoreApp';
 import CameraApp from './apps/CameraApp';
 import GalleryApp from './apps/GalleryApp';
 import TerminalApp from './apps/TerminalApp';
+import GatoAccountApp from './apps/GatoAccountApp';
+import GatoCloudApp from './apps/GatoCloudApp';
 import { OSProvider, useOS } from './context/OSContext';
 import { FileSystemProvider } from './context/FileSystemContext';
 import { AnimatePresence } from 'framer-motion';
@@ -37,7 +39,7 @@ function AppContent() {
   // Initial Boot Logic
   useEffect(() => {
     if (powerState === 'off') {
-      // Auto-boot for first time user experience could go here, but let's make them press the button
+      turnOn();
     }
   }, []);
 
@@ -57,6 +59,10 @@ function AppContent() {
         return <GalleryApp />;
       case 'terminal':
         return <TerminalApp />;
+      case 'gatoaccount':
+        return <GatoAccountApp />;
+      case 'gatocloud':
+        return <GatoCloudApp />;
       default:
         return (
           <div className="flex items-center justify-center h-full text-gray-500">
@@ -71,12 +77,12 @@ function AppContent() {
       {/* Phone Frame */}
       <div className="relative w-[320px] h-[650px] bg-black rounded-[40px] shadow-2xl border-[8px] border-gray-800 overflow-hidden ring-4 ring-gray-900/50">
 
-        {/* Power Button (Side) */}
-        <button
+        {/* Power Button (Side) - Removed for Auto-Boot */}
+        {/* <button
           className="absolute -right-3 top-24 w-1 h-12 bg-gray-700 rounded-r-md active:bg-gray-600 transition-colors z-0"
           onClick={powerState === 'on' ? turnOff : turnOn}
           title={powerState === 'on' ? "Turn Off" : "Turn On"}
-        ></button>
+        ></button> */}
 
         {/* Dynamic Island / Notch Placeholder */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[30px] bg-black rounded-b-2xl z-[60] pointer-events-none"></div>

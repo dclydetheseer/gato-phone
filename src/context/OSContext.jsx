@@ -23,6 +23,8 @@ export const OSProvider = ({ children }) => {
         { id: 'playstore', name: 'Play Store', icon: ShoppingBag, color: 'bg-gradient-to-br from-green-400 to-blue-500' },
         { id: 'gallery', name: 'Gallery', icon: Image, color: 'bg-purple-500' },
         { id: 'terminal', name: 'Terminal', icon: Terminal, color: 'bg-black' },
+        { id: 'gatoaccount', name: 'Gato ID', icon: User, color: 'bg-blue-600' },
+        { id: 'gatocloud', name: 'Gato Cloud', icon: Cloud, color: 'bg-sky-500' },
     ]);
 
     const [openApps, setOpenApps] = useState([]);
@@ -39,7 +41,21 @@ export const OSProvider = ({ children }) => {
     // Power State: 'off', 'booting', 'on'
     const [powerState, setPowerState] = useState('off');
 
+    // Gato Account State
+    const [gatoAccount, setGatoAccount] = useState(() => {
+        const saved = localStorage.getItem('gato_os_account');
+        return saved ? JSON.parse(saved) : null;
+    });
+
     const [notifications, setNotifications] = useState([]);
+
+    useEffect(() => {
+        if (gatoAccount) {
+            localStorage.setItem('gato_os_account', JSON.stringify(gatoAccount));
+        } else {
+            localStorage.removeItem('gato_os_account');
+        }
+    }, [gatoAccount]);
 
     useEffect(() => {
         localStorage.setItem('gato_os_theme', theme);
@@ -87,6 +103,16 @@ export const OSProvider = ({ children }) => {
         }, 5000);
     };
 
+    const loginGatoAccount = (accountData) => {
+        setGatoAccount(accountData);
+        addNotification({ title: 'Gato ID', message: `Welcome back, ${accountData.username}!` });
+    };
+
+    const logoutGatoAccount = () => {
+        setGatoAccount(null);
+        addNotification({ title: 'Gato ID', message: 'Signed out successfully.' });
+    };
+
     const unlock = () => setIsLocked(false);
     const lock = () => setIsLocked(true);
 
@@ -110,7 +136,8 @@ export const OSProvider = ({ children }) => {
             launchApp, closeApp, unlock, lock, openShade, closeShade, toggleShade,
             openAppDrawer, closeAppDrawer, toggleAppDrawer,
             openRecents, closeRecents, toggleRecents, toggleTheme, addNotification,
-            turnOn, turnOff, setWallpaper
+            turnOn, turnOff, setWallpaper,
+            gatoAccount, loginGatoAccount, logoutGatoAccount
         }}>
             {children}
         </OSContext.Provider>

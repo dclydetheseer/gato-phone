@@ -1,31 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { Wifi, Signal, Battery } from 'lucide-react';
-import { format } from 'date-fns';
+import { Wifi, Battery, Signal, Cloud } from 'lucide-react';
+import { useOS } from '../context/OSContext';
 
-const StatusBar = ({ theme = 'light' }) => {
+const StatusBar = () => {
+    const { theme } = useOS();
     const [time, setTime] = useState(new Date());
+    const [latency, setLatency] = useState(24);
 
     useEffect(() => {
         const timer = setInterval(() => setTime(new Date()), 1000);
-        return () => clearInterval(timer);
+
+        // Simulate fluctuating cloud latency
+        const latencyTimer = setInterval(() => {
+            setLatency(prev => {
+                const change = Math.floor(Math.random() * 10) - 5;
+                const newValue = prev + change;
+                return Math.max(15, Math.min(80, newValue));
+            });
+        }, 2000);
+
+        return () => {
+            clearInterval(timer);
+            clearInterval(latencyTimer);
+        };
     }, []);
 
-    const textColor = theme === 'dark' ? 'text-white' : 'text-gray-900';
+    const formatTime = (date) => {
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
 
     return (
-        <div className={`h-8 w-full flex items-center justify-between px-4 ${textColor} z-50 absolute top-0 left-0 text-sm font-medium`}>
-            {/* Time on the left for Android 10+ */}
-            <span className="tracking-wide">
-                {format(time, 'h:mm')}
-            </span>
-
-            <div className="flex items-center gap-1.5">
-                <Wifi size={16} strokeWidth={2.5} />
-                <Signal size={16} strokeWidth={2.5} />
-                <div className="relative">
-                    <Battery size={18} strokeWidth={2.5} className="rotate-0" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-1 bg-current rounded-[1px]"></div>
+        <div className={`w-full h-8 px-5 flex items-center justify-between text-xs font-medium z-50 transition-colors ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <div className="flex items-center gap-2">
+                <span>{formatTime(time)}</span>
+                <div className="flex items-center gap-1 opacity-60 bg-gray-500/20 px-1.5 py-0.5 rounded text-[10px]">
+                    <Cloud size={10} />
+                    <span>{latency}ms</span>
                 </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+                <Signal size={14} />
+                <Wifi size={14} />
+                <Battery size={14} />
             </div>
         </div>
     );
