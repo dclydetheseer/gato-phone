@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Wifi, Bluetooth, Battery, Flashlight, Moon, RotateCcw, Settings, Bell } from 'lucide-react';
+import { Wifi, Bluetooth, Battery, Flashlight, Moon, RotateCcw, Settings, Bell, Sun, Volume2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useOS } from '../context/OSContext';
 
@@ -58,11 +58,32 @@ const NotificationShade = () => {
                 <QuickSettingTile icon={Moon} label="Dark Mode" active={theme === 'dark'} onClick={toggleTheme} />
             </div>
 
-            {/* Brightness Slider */}
-            <div className="px-6 py-6">
-                <div className="h-10 bg-gray-800 rounded-full flex items-center px-4 relative overflow-hidden">
-                    <div className="absolute left-0 top-0 h-full w-[70%] bg-blue-500/20"></div>
-                    <span className="relative z-10 text-sm font-medium ml-2">Brightness</span>
+            {/* Sliders */}
+            <div className="px-6 py-4 space-y-4">
+                {/* Brightness */}
+                <div className="h-12 bg-gray-800/80 backdrop-blur-md rounded-2xl flex items-center px-4 relative overflow-hidden group">
+                    <Sun size={20} className="text-white z-10 mr-3" />
+                    <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        defaultValue="70"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                    />
+                    <div className="absolute left-0 top-0 h-full bg-white/20 w-[70%] rounded-2xl pointer-events-none"></div>
+                </div>
+
+                {/* Volume */}
+                <div className="h-12 bg-gray-800/80 backdrop-blur-md rounded-2xl flex items-center px-4 relative overflow-hidden group">
+                    <Volume2 size={20} className="text-white z-10 mr-3" />
+                    <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        defaultValue="50"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                    />
+                    <div className="absolute left-0 top-0 h-full bg-white/20 w-[50%] rounded-2xl pointer-events-none"></div>
                 </div>
             </div>
 

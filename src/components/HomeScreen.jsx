@@ -11,13 +11,30 @@ const HomeScreen = () => {
 
     return (
         <div className="flex flex-col h-full">
-            {/* Date/Weather Widget Placeholder */}
-            <div className="mt-8 px-6 mb-auto">
-                <div className="text-5xl font-thin text-white tracking-tighter">
-                    {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {/* Widgets Area */}
+            <div className="mt-8 px-6 mb-auto space-y-4">
+                {/* Clock & Weather Widget */}
+                <div className="flex flex-col">
+                    <div className="text-6xl font-thin text-white tracking-tighter leading-none">
+                        {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }).replace(/\s[AP]M/, '')}
+                    </div>
+                    <div className="flex items-center gap-2 text-white/80 mt-1 font-medium text-sm">
+                        <span>{new Date().toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}</span>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                            <span className="text-yellow-400">☀</span> 72°F
+                        </span>
+                    </div>
                 </div>
-                <div className="text-sm text-white/80 mt-1 font-medium">
-                    {new Date().toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
+
+                {/* Search Widget */}
+                <div className="w-full bg-white/10 backdrop-blur-md rounded-3xl p-4 flex items-center gap-3 shadow-lg border border-white/5 cursor-pointer active:scale-95 transition-transform">
+                    <div className="w-6 h-6 bg-gradient-to-tr from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white">
+                        G
+                    </div>
+                    <span className="text-white/50 text-sm font-medium">Search Gato...</span>
+                    <div className="flex-1"></div>
+                    <Mic size={18} className="text-white/50" />
                 </div>
             </div>
 
@@ -32,23 +49,9 @@ const HomeScreen = () => {
                 ))}
             </div>
 
-            {/* Search Bar / App Drawer Trigger */}
+            {/* Dock Area (Search Bar moved to widget, this is now just spacing or dock) */}
             <div className="px-4 mb-4">
-                <div
-                    className="bg-white/90 backdrop-blur-md rounded-full h-12 flex items-center px-4 shadow-lg gap-3"
-                    onClick={openAppDrawer}
-                >
-                    <div className="text-xl font-bold">
-                        <span className="text-blue-500">G</span>
-                        <span className="text-red-500">o</span>
-                        <span className="text-yellow-500">o</span>
-                        <span className="text-blue-500">g</span>
-                        <span className="text-green-500">l</span>
-                        <span className="text-red-500">e</span>
-                    </div>
-                    <div className="flex-1"></div>
-                    <Mic size={20} className="text-gray-500" />
-                </div>
+                {/* We can add a dock background here if desired, or keep it clean */}
             </div>
         </div>
     );
