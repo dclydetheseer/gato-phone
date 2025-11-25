@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Settings, Clock, Calculator, Globe, Mail, Calendar, Camera, Music, Map, MessageSquare, Phone, User, ShoppingBag, Image, Terminal } from 'lucide-react';
+import { Settings, Clock, Calculator, Globe, Mail, Calendar, Camera, Music, Map, MessageSquare, Phone, User, ShoppingBag, Image, Terminal, Cloud } from 'lucide-react';
 import { useFileSystem } from './FileSystemContext';
 
 const OSContext = createContext();
