@@ -75,7 +75,7 @@ export const OSProvider = ({ children }) => {
             setPowerState('booting');
             setTimeout(() => {
                 setPowerState('on');
-            }, 4500); // Match boot animation duration
+            }, 8000); // Realistic boot duration
         }
     };
 

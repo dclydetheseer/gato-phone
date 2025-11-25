@@ -20,6 +20,12 @@ import GalleryApp from './apps/GalleryApp';
 import TerminalApp from './apps/TerminalApp';
 import GatoAccountApp from './apps/GatoAccountApp';
 import GatoCloudApp from './apps/GatoCloudApp';
+import PhoneApp from './apps/PhoneApp';
+import MessagesApp from './apps/MessagesApp';
+import MusicApp from './apps/MusicApp';
+import CalendarApp from './apps/CalendarApp';
+import MailApp from './apps/MailApp';
+import MapsApp from './apps/MapsApp';
 import { OSProvider, useOS } from './context/OSContext';
 import { FileSystemProvider } from './context/FileSystemContext';
 import { AnimatePresence } from 'framer-motion';
@@ -63,6 +69,18 @@ function AppContent() {
         return <GatoAccountApp />;
       case 'gatocloud':
         return <GatoCloudApp />;
+      case 'phone':
+        return <PhoneApp />;
+      case 'messages':
+        return <MessagesApp />;
+      case 'music':
+        return <MusicApp />;
+      case 'calendar':
+        return <CalendarApp />;
+      case 'mail':
+        return <MailApp />;
+      case 'maps':
+        return <MapsApp />;
       default:
         return (
           <div className="flex items-center justify-center h-full text-gray-500">
@@ -91,14 +109,7 @@ function AppContent() {
           {powerState === 'booting' && <BootAnimation onComplete={() => { }} />}
         </AnimatePresence>
 
-        {powerState === 'off' ? (
-          <div className="w-full h-full bg-black flex items-center justify-center">
-            <div className="text-gray-800 flex flex-col items-center gap-2">
-              <Power size={48} />
-              <span className="text-xs">Power Off</span>
-            </div>
-          </div>
-        ) : (
+        {powerState === 'on' ? (
           <Wallpaper>
             <StatusBar />
 
@@ -139,6 +150,8 @@ function AppContent() {
             {/* Home Indicator (Removed as GestureBar includes it) */}
             {/* <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1.5 bg-white/50 rounded-full z-50 pointer-events-none"></div> */}
           </Wallpaper>
+        ) : (
+          <div className="w-full h-full bg-black"></div>
         )}
       </div>
     </div>
