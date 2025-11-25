@@ -1,37 +1,95 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, Edit, ArrowLeft, Send, User } from 'lucide-react';
 import { useOS } from '../context/OSContext';
+import { useSystemSound } from '../hooks/useSystemSound';
 
 const MessagesApp = () => {
     const { theme } = useOS();
+    const { playType, playNotification } = useSystemSound();
     const [selectedChat, setSelectedChat] = useState(null);
     const [messageInput, setMessageInput] = useState('');
+    const messagesEndRef = useRef(null);
 
-    const [chats, setChats] = useState([
+    // Initial dummy data
+    const initialChats = [
         { id: 1, name: 'Team Gato', lastMessage: 'Welcome to Gato OS!', time: '10:00 AM', unread: true, messages: [{ id: 1, text: 'Welcome to Gato OS! Hope you enjoy the experience.', sender: 'them' }] },
         { id: 2, name: 'Mom', lastMessage: 'Call me when you can', time: 'Yesterday', unread: false, messages: [{ id: 1, text: 'Call me when you can', sender: 'them' }] },
         { id: 3, name: 'Mark', lastMessage: 'See you later!', time: 'Mon', unread: false, messages: [{ id: 1, text: 'See you later!', sender: 'them' }] },
-    ]);
+    ];
+
+    // Load from localStorage or use initial
+    const [chats, setChats] = useState(() => {
+        const saved = localStorage.getItem('gato_messages');
+        return saved ? JSON.parse(saved) : initialChats;
+    });
+
+    // Persist chats
+    useEffect(() => {
+        localStorage.setItem('gato_messages', JSON.stringify(chats));
+    }, [chats]);
+
+    // Scroll to bottom
+    useEffect(() => {
+        if (selectedChat) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [selectedChat, chats]);
 
     const handleSend = () => {
         if (!messageInput.trim()) return;
 
+        playType(); // Sound effect
+
+        const newMessage = { id: Date.now(), text: messageInput, sender: 'me' };
         const updatedChats = chats.map(chat => {
             if (chat.id === selectedChat.id) {
                 return {
                     ...chat,
                     lastMessage: messageInput,
                     time: 'Now',
-                    messages: [...chat.messages, { id: Date.now(), text: messageInput, sender: 'me' }]
+                    messages: [...chat.messages, newMessage]
                 };
             }
             return chat;
         });
 
         setChats(updatedChats);
-        // Update selected chat reference to show new message immediately
         setSelectedChat(updatedChats.find(c => c.id === selectedChat.id));
         setMessageInput('');
+
+        // Auto-reply Bot Logic
+        setTimeout(() => {
+            const replyText = getAutoReply(messageInput);
+            const replyMessage = { id: Date.now() + 1, text: replyText, sender: 'them' };
+
+            const botUpdatedChats = updatedChats.map(chat => {
+                if (chat.id === selectedChat.id) {
+                    return {
+                        ...chat,
+                        lastMessage: replyText,
+                        time: 'Now',
+                        messages: [...chat.messages, newMessage, replyMessage],
+                        unread: true
+                    };
+                }
+                return chat;
+            });
+
+            setChats(botUpdatedChats);
+            // If still looking at this chat, update view and play sound
+            if (selectedChat.id === selectedChat.id) {
+                setSelectedChat(botUpdatedChats.find(c => c.id === selectedChat.id));
+                playNotification();
+            }
+        }, 2000);
+    };
+
+    const getAutoReply = (text) => {
+        const lower = text.toLowerCase();
+        if (lower.includes('hello') || lower.includes('hi')) return "Hey there! How's it going?";
+        if (lower.includes('gato')) return "Gato OS is the best, right?";
+        if (lower.includes('time')) return `It's currently ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.`;
+        return "That's interesting! Tell me more.";
     };
 
     if (selectedChat) {
@@ -60,6 +118,7 @@ const MessagesApp = () => {
                             </div>
                         </div>
                     ))}
+                    <div ref={messagesEndRef} />
                 </div>
 
                 {/* Input */}
@@ -96,7 +155,6 @@ const MessagesApp = () => {
                     />
                 </div>
                 <div className="w-8 h-8 ml-4 rounded-full overflow-hidden bg-gray-200">
-                    {/* Profile placeholder */}
                     <User className="w-full h-full p-1 text-gray-500" />
                 </div>
             </div>

@@ -1,12 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Settings, Clock, Calculator, Globe, Mail, Calendar, Camera, Music, Map, MessageSquare, Phone, User, ShoppingBag, Image, Terminal, Cloud } from 'lucide-react';
-import { useFileSystem } from './FileSystemContext';
+import { useSystemSound } from '../hooks/useSystemSound';
 
 const OSContext = createContext();
 
 export const useOS = () => useContext(OSContext);
 
 export const OSProvider = ({ children }) => {
+    const { playUnlock, playLock } = useSystemSound();
+
     const [installedApps, setInstalledApps] = useState([
         { id: 'settings', name: 'Settings', icon: Settings, color: 'bg-gray-500' },
         { id: 'clock', name: 'Clock', icon: Clock, color: 'bg-black' },
@@ -118,8 +120,15 @@ export const OSProvider = ({ children }) => {
         addNotification({ title: 'Gato ID', message: 'Signed out successfully.' });
     };
 
-    const unlock = () => setIsLocked(false);
-    const lock = () => setIsLocked(true);
+    const unlock = () => {
+        setIsLocked(false);
+        playUnlock();
+    };
+
+    const lock = () => {
+        setIsLocked(true);
+        playLock();
+    };
 
     const launchApp = (appId) => {
         if (!openApps.includes(appId)) {

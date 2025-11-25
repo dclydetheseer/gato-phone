@@ -8,7 +8,8 @@ const BrowserApp = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        setTimeout(() => setIsLoading(false), 1500);
+        // Basic URL validation/formatting could go here
+        setTimeout(() => setIsLoading(false), 1000); // Simulate load time for UX
     };
 
     return (
@@ -45,10 +46,11 @@ const BrowserApp = () => {
                 )}
 
                 <iframe
-                    src="https://www.wikipedia.org/"
+                    src={url.startsWith('http') ? url : `https://${url}`}
                     title="Browser"
-                    className="w-full h-full border-0"
-                    sandbox="allow-scripts allow-same-origin"
+                    className="w-full h-full border-0 bg-white"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                    onError={() => alert("Failed to load site. Some sites block embedding.")}
                 />
 
                 {/* Overlay to prevent interaction if needed, or just let it be */}

@@ -3,18 +3,26 @@ import { motion } from 'framer-motion';
 import { Wifi, Bluetooth, Battery, Flashlight, Moon, RotateCcw, Settings, Bell, Sun, Volume2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useOS } from '../context/OSContext';
+import { useSystemSound } from '../hooks/useSystemSound';
 
-const QuickSettingTile = ({ icon: Icon, label, active, onClick }) => (
-    <button
-        onClick={onClick}
-        className="flex flex-col items-center gap-2"
-    >
-        <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${active ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-300'}`}>
-            <Icon size={20} />
-        </div>
-        <span className="text-xs text-gray-300 font-medium">{label}</span>
-    </button>
-);
+const QuickSettingTile = ({ icon: Icon, label, active, onClick }) => {
+    const { playClick } = useSystemSound();
+
+    return (
+        <button
+            onClick={() => {
+                playClick();
+                onClick();
+            }}
+            className="flex flex-col items-center gap-2"
+        >
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${active ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-300'}`}>
+                <Icon size={20} />
+            </div>
+            <span className="text-xs text-gray-300 font-medium">{label}</span>
+        </button>
+    );
+};
 
 const NotificationShade = () => {
     const { isShadeOpen, closeShade, notifications, theme, toggleTheme } = useOS();
