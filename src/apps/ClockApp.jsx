@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
+import { Globe, AlarmClock, Timer, Hourglass } from 'lucide-react';
 
 const ClockApp = () => {
     const [time, setTime] = useState(new Date());
+    const [activeTab, setActiveTab] = useState('clock');
 
     useEffect(() => {
         const timer = setInterval(() => setTime(new Date()), 1000);
@@ -10,40 +11,69 @@ const ClockApp = () => {
     }, []);
 
     return (
-        <div className="h-full bg-black text-white flex flex-col items-center justify-center relative overflow-hidden">
-            {/* Analog Clock Face (Simple CSS implementation) */}
-            <div className="w-64 h-64 rounded-full border-4 border-orange-500 relative flex items-center justify-center mb-12 shadow-[0_0_50px_rgba(249,115,22,0.3)]">
-                {/* Hour Hand */}
-                <div
-                    className="absolute w-2 h-16 bg-white rounded-full origin-bottom bottom-1/2 left-1/2 -translate-x-1/2"
-                    style={{ transform: `translateX(-50%) rotate(${(time.getHours() % 12) * 30 + time.getMinutes() * 0.5}deg)` }}
-                ></div>
-                {/* Minute Hand */}
-                <div
-                    className="absolute w-1.5 h-24 bg-white rounded-full origin-bottom bottom-1/2 left-1/2 -translate-x-1/2"
-                    style={{ transform: `translateX(-50%) rotate(${time.getMinutes() * 6}deg)` }}
-                ></div>
-                {/* Second Hand */}
-                <div
-                    className="absolute w-0.5 h-28 bg-orange-500 rounded-full origin-bottom bottom-1/2 left-1/2 -translate-x-1/2"
-                    style={{ transform: `translateX(-50%) rotate(${time.getSeconds() * 6}deg)` }}
-                ></div>
-                {/* Center Dot */}
-                <div className="w-3 h-3 bg-orange-500 rounded-full z-10"></div>
+        <div className="h-full bg-white flex flex-col text-gray-900">
+            {/* Content */}
+            <div className="flex-1 flex flex-col items-center justify-center p-8">
+                {activeTab === 'clock' && (
+                    <div className="text-center">
+                        <div className="text-6xl font-light mb-2">
+                            {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                        <div className="text-xl text-gray-500">
+                            {time.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' })}
+                        </div>
+                    </div>
+                )}
+                {activeTab === 'alarm' && (
+                    <div className="text-center text-gray-500">
+                        <AlarmClock size={64} className="mx-auto mb-4 opacity-50" />
+                        <p>No alarms set</p>
+                    </div>
+                )}
+                {activeTab === 'timer' && (
+                    <div className="text-center text-gray-500">
+                        <Hourglass size={64} className="mx-auto mb-4 opacity-50" />
+                        <p>Timer</p>
+                    </div>
+                )}
+                {activeTab === 'stopwatch' && (
+                    <div className="text-center text-gray-500">
+                        <Timer size={64} className="mx-auto mb-4 opacity-50" />
+                        <p>Stopwatch</p>
+                    </div>
+                )}
             </div>
 
-            <h1 className="text-6xl font-thin tracking-wider mb-2">
-                {format(time, 'h:mm')}
-            </h1>
-            <p className="text-xl text-gray-400 uppercase tracking-widest">
-                {format(time, 'a')}
-            </p>
-
-            <div className="absolute bottom-12 flex gap-8 text-orange-500">
-                <span className="font-bold border-b-2 border-orange-500 pb-1">World Clock</span>
-                <span className="text-gray-600">Alarm</span>
-                <span className="text-gray-600">Stopwatch</span>
-                <span className="text-gray-600">Timer</span>
+            {/* Bottom Navigation */}
+            <div className="h-16 border-t border-gray-200 flex items-center justify-around px-4">
+                <button
+                    onClick={() => setActiveTab('alarm')}
+                    className={`flex flex-col items-center gap-1 ${activeTab === 'alarm' ? 'text-blue-600' : 'text-gray-500'}`}
+                >
+                    <AlarmClock size={24} />
+                    <span className="text-xs font-medium">Alarm</span>
+                </button>
+                <button
+                    onClick={() => setActiveTab('clock')}
+                    className={`flex flex-col items-center gap-1 ${activeTab === 'clock' ? 'text-blue-600' : 'text-gray-500'}`}
+                >
+                    <Globe size={24} />
+                    <span className="text-xs font-medium">Clock</span>
+                </button>
+                <button
+                    onClick={() => setActiveTab('timer')}
+                    className={`flex flex-col items-center gap-1 ${activeTab === 'timer' ? 'text-blue-600' : 'text-gray-500'}`}
+                >
+                    <Hourglass size={24} />
+                    <span className="text-xs font-medium">Timer</span>
+                </button>
+                <button
+                    onClick={() => setActiveTab('stopwatch')}
+                    className={`flex flex-col items-center gap-1 ${activeTab === 'stopwatch' ? 'text-blue-600' : 'text-gray-500'}`}
+                >
+                    <Timer size={24} />
+                    <span className="text-xs font-medium">Stopwatch</span>
+                </button>
             </div>
         </div>
     );

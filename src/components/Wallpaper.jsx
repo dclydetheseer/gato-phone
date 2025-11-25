@@ -1,12 +1,20 @@
 import React from 'react';
+import { useOS } from '../context/OSContext';
 
 const Wallpaper = ({ children }) => {
-    return (
-        <div className="w-full h-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden">
-            {/* Abstract Shapes for visual interest */}
-            <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[30%] bg-blue-400 rounded-full mix-blend-overlay filter blur-3xl opacity-50 animate-pulse"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[40%] bg-yellow-300 rounded-full mix-blend-overlay filter blur-3xl opacity-30 animate-pulse delay-1000"></div>
+    const { wallpaper } = useOS();
 
+    const getWallpaperStyle = () => {
+        if (wallpaper === 'default') {
+            return { background: 'linear-gradient(to bottom, #a18cd1 0%, #fbc2eb 100%)' };
+        } else if (wallpaper.startsWith('data:')) {
+            return { backgroundImage: `url(${wallpaper})`, backgroundSize: 'cover', backgroundPosition: 'center' };
+        }
+        return { background: 'linear-gradient(to bottom, #a18cd1 0%, #fbc2eb 100%)' };
+    };
+
+    return (
+        <div className="w-full h-full relative overflow-hidden" style={getWallpaperStyle()}>
             {children}
         </div>
     );

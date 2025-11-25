@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
-import { Settings, Clock, Calculator, Globe, Mail, Calendar, Camera, Music, Map, MessageSquare, Phone, User } from 'lucide-react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Settings, Clock, Calculator, Globe, Mail, Calendar, Camera, Music, Map, MessageSquare, Phone, User, ShoppingBag, Image, Terminal } from 'lucide-react';
+import { useFileSystem } from './FileSystemContext';
 
 const OSContext = createContext();
 
@@ -19,12 +20,64 @@ export const OSProvider = ({ children }) => {
         { id: 'messages', name: 'Messages', icon: MessageSquare, color: 'bg-green-400' },
         { id: 'phone', name: 'Phone', icon: Phone, color: 'bg-green-500' },
         { id: 'contacts', name: 'Contacts', icon: User, color: 'bg-gray-400' },
+        { id: 'playstore', name: 'Play Store', icon: ShoppingBag, color: 'bg-gradient-to-br from-green-400 to-blue-500' },
+        { id: 'gallery', name: 'Gallery', icon: Image, color: 'bg-purple-500' },
+        { id: 'terminal', name: 'Terminal', icon: Terminal, color: 'bg-black' },
     ]);
 
     const [openApps, setOpenApps] = useState([]);
     const [activeApp, setActiveApp] = useState(null);
     const [isLocked, setIsLocked] = useState(true);
+    const [isShadeOpen, setIsShadeOpen] = useState(false);
+    const [isAppDrawerOpen, setIsAppDrawerOpen] = useState(false);
+    const [isRecentsOpen, setIsRecentsOpen] = useState(false);
+
+    // Persistence for Theme
+    const [theme, setTheme] = useState(() => localStorage.getItem('gato_os_theme') || 'light');
+    const [wallpaper, setWallpaper] = useState(() => localStorage.getItem('gato_os_wallpaper') || 'default');
+
+    // Power State: 'off', 'booting', 'on'
+    const [powerState, setPowerState] = useState('off');
+
     const [notifications, setNotifications] = useState([]);
+
+    useEffect(() => {
+        localStorage.setItem('gato_os_theme', theme);
+    }, [theme]);
+
+    useEffect(() => {
+        localStorage.setItem('gato_os_wallpaper', wallpaper);
+    }, [wallpaper]);
+
+    const turnOn = () => {
+        if (powerState === 'off') {
+            setPowerState('booting');
+            setTimeout(() => {
+                setPowerState('on');
+            }, 4500); // Match boot animation duration
+        }
+    };
+
+    const turnOff = () => {
+        setPowerState('off');
+        setOpenApps([]);
+        setActiveApp(null);
+        setIsLocked(true);
+    };
+
+    const openShade = () => setIsShadeOpen(true);
+    const closeShade = () => setIsShadeOpen(false);
+    const toggleShade = () => setIsShadeOpen(prev => !prev);
+
+    const openAppDrawer = () => setIsAppDrawerOpen(true);
+    const closeAppDrawer = () => setIsAppDrawerOpen(false);
+    const toggleAppDrawer = () => setIsAppDrawerOpen(prev => !prev);
+
+    const openRecents = () => setIsRecentsOpen(true);
+    const closeRecents = () => setIsRecentsOpen(false);
+    const toggleRecents = () => setIsRecentsOpen(prev => !prev);
+
+    const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
 
     const addNotification = (notification) => {
         const id = Date.now();
@@ -52,7 +105,13 @@ export const OSProvider = ({ children }) => {
     };
 
     return (
-        <OSContext.Provider value={{ installedApps, openApps, activeApp, isLocked, notifications, launchApp, closeApp, unlock, lock, addNotification }}>
+        <OSContext.Provider value={{
+            installedApps, openApps, activeApp, isLocked, isShadeOpen, isAppDrawerOpen, isRecentsOpen, notifications, theme, powerState, wallpaper,
+            launchApp, closeApp, unlock, lock, openShade, closeShade, toggleShade,
+            openAppDrawer, closeAppDrawer, toggleAppDrawer,
+            openRecents, closeRecents, toggleRecents, toggleTheme, addNotification,
+            turnOn, turnOff, setWallpaper
+        }}>
             {children}
         </OSContext.Provider>
     );

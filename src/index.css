@@ -25,3 +25,15 @@ body {
   overflow: hidden;
   /* Prevent scrolling on the body */
 }
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.animate-ripple {
+  animation-name: ripple;
+  animation-timing-function: linear;
+}
